@@ -31,6 +31,6 @@ public class DisjointSet {
             set[root1] += set[root2];
             set[root2] = root1;
         }
-        System.out.println();
+
     }
 }
