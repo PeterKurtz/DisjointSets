@@ -4,6 +4,10 @@ public class HexGame {
     public String[] grid;
     private DisjointSet colorSet;
     private int size;
+    private int topNum;
+    private int bottomNum;
+    private int leftNum;
+    private int rightNum;
 
     public HexGame(int size){
         this.size = size;
@@ -13,6 +17,11 @@ public class HexGame {
             this.grid[i] = "0";
         }
         this.colorSet = new DisjointSet(boardNum + 4);
+        this.leftNum = size*size + 2;
+        this.rightNum = size*size + 3;
+        this.topNum = size*size;
+        this.bottomNum = size*size + 1;
+
     }
 
     public int getSize(){
@@ -23,14 +32,12 @@ public class HexGame {
 
         ArrayList<Integer> neighborCells = getAdjacentCells(option, "R");
         int adjOption = option - 1;
-        int topNum = size*size;//top is 121
-        int botNum = size*size + 1;//bottom 123
 
         if (grid[adjOption].equals("0")){
             grid[adjOption] = "R";
             for (int neighbor : neighborCells) {
                 int adjNeighbor = neighbor - 1;
-                if ((adjNeighbor == topNum) || (adjNeighbor == botNum)) {
+                if ((adjNeighbor == topNum) || (adjNeighbor == bottomNum)) {
                     colorSet.union(adjOption, adjNeighbor);
                 }
                 else if (grid[adjNeighbor].equals("R")) {
@@ -52,8 +59,6 @@ public class HexGame {
     public void playBlue(int option, boolean displayNeighbors) {
         ArrayList<Integer> neighborCells = getAdjacentCells(option, "B");
         int adjOption = option - 1;
-        int leftNum = size*size + 2;//Left is 123
-        int rightNum = size*size + 3;//bottom 123
 
         if (grid[adjOption].equals("0")){
             grid[adjOption] = "B";
@@ -78,16 +83,32 @@ public class HexGame {
 
     }
 
+    public boolean isWinner(){
+        boolean isWinner;
+        if (colorSet.find(bottomNum) == colorSet.find(topNum)) {
+            isWinner = true;
+        }
+        else if (colorSet.find(rightNum) == colorSet.find(leftNum)) {
+            isWinner = true;
+        }
+        else {
+            isWinner = false;
+        }
+
+
+        return isWinner;
+    }
+
     private ArrayList<Integer> getAdjacentCells(int position, String player) {
-        ArrayList<Integer> adjacentCells = new ArrayList<Integer>();
+        ArrayList<Integer> adjacentCells = new ArrayList<>();
         if (player.equals("R")){
             if (position == 1) {
-                adjacentCells.add((size*size) + 1);
+                adjacentCells.add(topNum + 1);
                 adjacentCells.add(size + 1);
                 adjacentCells.add(2);
             }
             else if (position == size) {
-                adjacentCells.add((size * size) + 1);
+                adjacentCells.add(topNum + 1);
                 adjacentCells.add(position + size);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + size - 1);
@@ -96,20 +117,20 @@ public class HexGame {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add((size*size) + 2);
+                adjacentCells.add(bottomNum + 1);
             }
             else if (position == (size*size)) {
-                adjacentCells.add((size*size) + 2);
+                adjacentCells.add(bottomNum + 1);
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - 1);
             }
-            else if ((position % 11) == 0) {
+            else if ((position % size) == 0) {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + size - 1);
                 adjacentCells.add(position + size);
             }
-            else if (position % 11 == 1) {
+            else if (position % size == 1) {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position + 1);
@@ -120,33 +141,33 @@ public class HexGame {
                 adjacentCells.add(position + 1);
                 adjacentCells.add(position + size - 1);
                 adjacentCells.add(position + size);
-                adjacentCells.add((size*size) + 1);
+                adjacentCells.add(topNum + 1);
             }
-            else if((((size*size) - size + 1) < position) && (position <= (size*size))) {
+            else if(((topNum - size + 1) < position) && (position <= topNum)) {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add((size*size) + 2);
+                adjacentCells.add(bottomNum + 1);
             }
             else {
-                adjacentCells.add(position - 11);
-                adjacentCells.add(position - 10);
+                adjacentCells.add(position - size);
+                adjacentCells.add(position - size + 1);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add(position + 10);
-                adjacentCells.add(position + 11);
+                adjacentCells.add(position + size - 1);
+                adjacentCells.add(position + size);
             }
         }
 
         if (player.equals("B")){
             if (position == 1) {
-                adjacentCells.add((size*size) + 3);
+                adjacentCells.add(leftNum + 1);
                 adjacentCells.add(size + 1);
                 adjacentCells.add(2);
             }
             else if (position == size) {
-                adjacentCells.add((size * size) + 4);
+                adjacentCells.add(rightNum + 1);
                 adjacentCells.add(position + size);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + size - 1);
@@ -155,22 +176,22 @@ public class HexGame {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add((size*size) + 3);
+                adjacentCells.add(leftNum + 1);
             }
             else if (position == (size*size)) {
-                adjacentCells.add((size*size) + 4);
+                adjacentCells.add(rightNum + 1);
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - 1);
             }
-            else if ((position % 11) == 0) {
+            else if ((position % size) == 0) {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + size - 1);
                 adjacentCells.add(position + size);
-                adjacentCells.add((size*size) +4);
+                adjacentCells.add(rightNum + 1);
             }
-            else if (position % 11 == 1) {
-                adjacentCells.add((size*size) + 3);
+            else if (position % size == 1) {
+                adjacentCells.add(leftNum + 1);
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position + 1);
@@ -189,12 +210,12 @@ public class HexGame {
                 adjacentCells.add(position + 1);
             }
             else {
-                adjacentCells.add(position - 11);
-                adjacentCells.add(position - 10);
+                adjacentCells.add(position - size);
+                adjacentCells.add(position - size + 1);
                 adjacentCells.add(position - 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add(position + 10);
-                adjacentCells.add(position + 11);
+                adjacentCells.add(position + size - 1);
+                adjacentCells.add(position + size);
             }
         }
 

@@ -5,7 +5,7 @@ public class Assignment6Driver {
 
     public static void main(String[] args) {
 
-        //testGame();
+        testGame();
         playGame("moves1.txt");
         System.out.println();
         playGame("moves2.txt");
@@ -17,13 +17,23 @@ public class Assignment6Driver {
         File file = new File(filename);
         try (Scanner input = new Scanner(file)) {
             while (input.hasNextLine()) {
+                String textInput = input.next();
                 if (redTurn) {
-                    game.playRed(Integer.parseInt(input.next()), false);
+                    game.playRed(Integer.parseInt(textInput), false);
                     redTurn = false;
                 }
                 else {
-                    game.playBlue(Integer.parseInt(input.next()), false);
+                    game.playBlue(Integer.parseInt(textInput), false);
                     redTurn = true;
+                }
+                if (game.isWinner()) {
+                    if (!redTurn) {
+                        System.out.println("Red wins with move at position " + textInput + "!!");
+                    }
+                    else{
+                        System.out.println("Blue wins with move at position " + textInput + "!!");
+                    }
+                    break;
                 }
             }
             printGrid(game);
@@ -81,7 +91,7 @@ public class Assignment6Driver {
             else{
                 System.out.print(game.grid[i] + " ");
             }
-            if (i % (size) == 10) {
+            if (i % (size) == size - 1) {
                 System.out.println();
                 for (int x = 0; x <= spaceNum; x++) {
                     System.out.print(" ");
@@ -89,6 +99,7 @@ public class Assignment6Driver {
                 spaceNum = spaceNum + 1;
             }
         }
+        System.out.println();
     }
 
 }
