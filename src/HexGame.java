@@ -20,12 +20,29 @@ public class HexGame {
     }
 
     public void playRed(int option, boolean displayNeighbors) {
-        ArrayList<Integer> adjacentCells = getAdjacentCells(option, "R");
+
+        ArrayList<Integer> neighborCells = getAdjacentCells(option, "R");
+        int adjOption = option - 1;
+        int topNum = size*size;//top is 121
+        int botNum = size*size + 1;//bottom 123
+
+        if (grid[adjOption].equals("0")){
+            grid[adjOption] = "R";
+            for (int neighbor : neighborCells) {
+                int adjNeighbor = neighbor - 1;
+                if ((adjNeighbor == topNum) || (adjNeighbor == botNum)) {
+                    colorSet.union(adjOption, adjNeighbor);
+                }
+                else if (grid[adjNeighbor].equals("R")) {
+                    colorSet.union(adjOption, adjNeighbor);
+                }
+            }
+        }
 
         if (displayNeighbors) {
             System.out.print("Cell " + option + ": [ ");
-            for (int x = 0; x < adjacentCells.size(); x++){
-                System.out.print(adjacentCells.get(x) + " ");
+            for (int x = 0; x < neighborCells.size(); x++){
+                System.out.print(neighborCells.get(x) + " ");
             }
             System.out.println("]");
         }
@@ -33,12 +50,28 @@ public class HexGame {
     }
 
     public void playBlue(int option, boolean displayNeighbors) {
-        ArrayList<Integer> adjacentCells = getAdjacentCells(option, "B");
+        ArrayList<Integer> neighborCells = getAdjacentCells(option, "B");
+        int adjOption = option - 1;
+        int leftNum = size*size + 2;//Left is 123
+        int rightNum = size*size + 3;//bottom 123
+
+        if (grid[adjOption].equals("0")){
+            grid[adjOption] = "B";
+            for (int neighbor : neighborCells) {
+                int adjNeighbor = neighbor - 1;
+                if ((adjNeighbor == leftNum) || (adjNeighbor == rightNum)) {
+                    colorSet.union(adjOption, adjNeighbor);
+                }
+                else if (grid[adjNeighbor].equals("B")) {
+                    colorSet.union(adjOption, adjNeighbor);
+                }
+            }
+        }
 
         if (displayNeighbors) {
             System.out.print("Cell " + option + ": [ ");
-            for (int x = 0; x < adjacentCells.size(); x++){
-                System.out.print(adjacentCells.get(x) + " ");
+            for (int x = 0; x < neighborCells.size(); x++){
+                System.out.print(neighborCells.get(x) + " ");
             }
             System.out.println("]");
         }
@@ -80,7 +113,7 @@ public class HexGame {
                 adjacentCells.add(position - size);
                 adjacentCells.add(position - size + 1);
                 adjacentCells.add(position + 1);
-                adjacentCells.add(position + size - 1);
+                adjacentCells.add(position + size);
             }
             else if(position <= size) {
                 adjacentCells.add(position - 1);

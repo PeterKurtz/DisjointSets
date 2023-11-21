@@ -22,12 +22,16 @@ public class DisjointSet {
         int root1 = find(node1);
         int root2 = find(node2);
 
-        if (set[root2] < set[root1]) {
+        if (root1 == root2) {
+            return;
+        }
+
+        else if (set[root2] < set[root1]) {
             set[root2] += set[root1];
             set[root1] = root2;
         }
 
-        else {
+        else if (set[root1] <= set[root2]){
             set[root1] += set[root2];
             set[root2] = root1;
         }
